@@ -220,6 +220,6 @@ class FotbalovyTrhAplikace:
 
 
 if __name__ == "__main__":
-    koren = tk.Tk()
-    aplikace = FotbalovyTrhAplikace(koren)
-    koren.mainloop()
+    root = tk.Tk()
+    aplikace = FotbalovyTrhAplikace(root)
+    root.mainloop()
