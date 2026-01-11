@@ -1,6 +1,6 @@
 -- vytvoreni databaze
-create database d;
-use d;
+create database fotbalovy_trh;
+use fotbalovy_trh;
 
 -- vytvoreni tabulky majitel
 create table majitel(
