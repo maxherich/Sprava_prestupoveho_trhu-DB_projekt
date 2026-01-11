@@ -1,10 +1,14 @@
+-- vytvoreni databaze
+create database d;
+use d;
+
 -- vytvoreni tabulky majitel
 create table majitel(
 	id int primary key auto_increment,
     jmeno varchar(30) not null,
     prijmeni varchar(30) not null,
     email varchar(30) not null,
-    rozpocet float not null check (rozpocet > 0),
+    rozpocet float not null check (rozpocet >= 0),
     aktivni bool not null
 );
 -- vytvoreni tabulky liga
@@ -12,7 +16,7 @@ create table liga(
 	id int primary key auto_increment,
     nazev varchar(30) not null,
     zeme varchar(30) not null,
-    uroven enum('1. liga', '2. liga', '3.liga') not null
+    uroven enum('1. liga', '2. liga', '3. liga') not null
 );
 
 -- vytvoreni tabulky klub
@@ -47,6 +51,7 @@ create table prestup(
     cena float not null
 );
 
+-- vytvoreni procedury pro transakci prestupu
 delimiter //
 create procedure nakup_hrace (kupujici_klub_id int, hrac_id int, cena int)
 begin	
@@ -58,16 +63,26 @@ begin
 end//
 delimiter ;
 
+-- vytvoreni view pro seznam hracu
 create view hraci_tymu
 as
-select jmeno, prijmeni, cislo_dresu, pozice, klub.nazev
+select hrac.id, jmeno, prijmeni, cislo_dresu, pozice, klub.nazev
 from hrac
 inner join klub on hrac.klub_id = klub.id
 order by hrac.klub_id, cislo_dresu;
 
+-- vytvoreni view pro seznam aktivnich majitelu
 create view seznam_aktivnich_majitelu
 as
-select jmeno, prijmeni, email, rozpocet, klub.nazev
+select majitel.id, jmeno, prijmeni, email, rozpocet, klub.nazev
 from majitel
 inner join klub on klub.majitel_id = majitel.id
 order by rozpocet desc;
+
+create view seznam_prestupu
+as
+select hrac.jmeno as jmeno, hrac.prijmeni as prijmeni, klub.nazev as klub, datum, cena
+from prestup
+inner join hrac on prestup.hrac_id = hrac.id
+inner join klub on prestup.kupujici_klub_id = klub.id
+order by datum desc;
